@@ -36,6 +36,29 @@ def get_landscape_surface(size):
     pygame_surface = pygame.surfarray.make_surface(landscape[:, :, :3]) 
     return pygame_surface
 
+def draw_game(screen, pygame_surface, city_locations_dict, city_names, routes):
+       while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+        screen.fill(black)
+        screen.blit(pygame_surface, (0, 0))
+
+        ''' draw cities '''
+        for i in range(len(city_names)):
+            pygame.draw.circle(pygame_surface,(220,20,60),city_locations_dict[city_names[i]], 5)
+
+        ''' draw first 10 routes '''
+        for i in range(len(routes)):
+            pygame.draw.line(pygame_surface,(220,20,60),city_locations_dict[routes[i][0]],city_locations_dict[routes[i][1]],1)
+
+        pygame.display.flip()
+
+def get_city_locations_dict(city_names, city_locations):
+    city_locations_dict = {name: location for name, location in zip(city_names, city_locations)}
+    return city_locations_dict
+
 
 if __name__ == "__main__":
     pygame.init()
@@ -55,24 +78,10 @@ if __name__ == "__main__":
     city_locations = get_randomly_spread_cities(size, len(city_names))
     routes = get_routes(city_names)
 
-    city_locations_dict = {name: location for name, location in zip(city_names, city_locations)}
+    city_locations_dict = get_city_locations_dict(city_names, city_locations)
+
     random.shuffle(routes)
     routes = routes[:10] 
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
+    draw_game(screen, pygame_surface, city_locations_dict, city_names, routes)
 
-        screen.fill(black)
-        screen.blit(pygame_surface, (0, 0))
-
-        ''' draw cities '''
-        for i in range(len(city_names)):
-            pygame.draw.circle(pygame_surface,(220,20,60),city_locations_dict[city_names[i]], 5)
-
-        ''' draw first 10 routes '''
-        for i in range(len(routes)):
-            pygame.draw.line(pygame_surface,(220,20,60),city_locations_dict[routes[i][0]],city_locations_dict[routes[i][1]],1)
-
-        pygame.display.flip()
