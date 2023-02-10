@@ -28,8 +28,8 @@ def get_randomly_spread_cities(size, n_cities):
     for y in range(size[1]):
         y_coord += [y]
 
-    x_city = random.sample(x_coord, n_cities)
-    y_city = random.sample(y_coord, n_cities)
+    x_city = random.choices(x_coord, k=n_cities)
+    y_city = random.choices(y_coord, k=n_cities)
 
     for z in range(n_cities):
         all_cities.append(tuple((x_city[z], y_city[z])))

@@ -30,15 +30,21 @@ from lab2.cities_n_routes import get_randomly_spread_cities, get_routes
 
 ''' Create helper functions here '''
 
+def get_landscape_surface(size):
+    landscape = get_landscape(size)
+    print("Created a landscape of size", landscape.shape)
+    pygame_surface = pygame.surfarray.make_surface(landscape[:, :, :3]) 
+    return pygame_surface
+
+
 if __name__ == "__main__":
     pygame.init()
     size = width, height = 640, 480
     black = 1, 1, 1
 
     screen = pygame.display.set_mode(size)
-    landscape = get_landscape(size)
-    print("Created a landscape of size", landscape.shape)
-    pygame_surface = pygame.surfarray.make_surface(landscape[:, :, :3]) 
+
+    pygame_surface = get_landscape_surface(size)
 
     city_names = ['Morkomasto', 'Morathrad', 'Eregailin', 'Corathrad', 'Eregarta',
                   'Numensari', 'Rhunkadi', 'Londathrad', 'Baernlad', 'Forthyr']
@@ -46,6 +52,8 @@ if __name__ == "__main__":
     routes = []
 
     ''' Setup cities and routes in here'''
+    city_locations = get_randomly_spread_cities(size, len(city_names))
+    routes = get_routes(city_names)
 
     city_locations_dict = {name: location for name, location in zip(city_names, city_locations)}
     random.shuffle(routes)
@@ -60,7 +68,11 @@ if __name__ == "__main__":
         screen.blit(pygame_surface, (0, 0))
 
         ''' draw cities '''
+        for i in range(len(city_names)):
+            pygame.draw.circle(pygame_surface,(220,20,60),city_locations_dict[city_names[i]], 5)
 
         ''' draw first 10 routes '''
+        for i in range(len(routes)):
+            pygame.draw.line(pygame_surface,(220,20,60),city_locations_dict[routes[i][0]],city_locations_dict[routes[i][1]],1)
 
         pygame.display.flip()
