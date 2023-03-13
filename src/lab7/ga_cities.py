@@ -17,19 +17,51 @@ import numpy as np
 import sys
 from pathlib import Path
 
+
 sys.path.append(str((Path(__file__) / ".." / ".." / "..").resolve().absolute()))
 
 from src.lab5.landscape import elevation_to_rgba
+from src.lab5.landscape import get_elevation
+from scipy.spatial import distance
 
 
 def game_fitness(cities, idx, elevation, size):
-    fitness = 0.0001  # Do not return a fitness of 0, it will mess up the algorithm.
+    fitness = 0.00001  # Do not return a fitness of 0, it will mess up the algorithm.
     """
     Create your fitness function here to fulfill the following criteria:
     1. The cities should not be under water
     2. The cities should have a realistic distribution across the landscape
     3. The cities may also not be on top of mountains or on top of each other
     """
+    city_array = solution_to_cities(cities, size)
+
+    for (x,y) in city_array:
+        #checking if cities are under water (if elevation is under 0.45, its considered under water) and cities are on top of mountains (if elevation is above 0.75, its considered on mountain)
+        if ((elevation[x][y]> 0.45) & (elevation[x][y]< 0.75)):
+            fitness += 0.1
+        else:
+            fitness += 0.01
+
+
+        #checking if cities are too close to each other or on top of each other
+        #on top will check if the cities are on top of each other. If the number is 2 or greater, that means there is 1 or more on top of each other since there will always the city itself matching itself.
+        on_top = 0
+        #shortest distance is the shortest euclidean distance between a city. If the number is smaller, the less fitness it will receive.
+        shortest_distance = 1000000
+        for (a,b) in city_array:
+            if (x,y) != (a,b):
+                if (distance.euclidean((x,y),(a,b)) < shortest_distance):
+                    shortest_distance = distance.euclidean((x,y),(a,b))
+            else:
+                on_top += 1
+
+        fitness += (0.02*shortest_distance)
+        
+        if on_top >=2:
+            fitness += 0.00001
+        else:
+            fitness += 1
+
     return fitness
 
 
@@ -108,6 +140,7 @@ def show_cities(cities, landscape_pic, cmap="gist_earth"):
     plt.show()
 
 
+
 if __name__ == "__main__":
     print("Initial Population")
 
@@ -115,6 +148,7 @@ if __name__ == "__main__":
     n_cities = 10
     elevation = []
     """ initialize elevation here from your previous code"""
+    elevation = get_elevation(size)
     # normalize landscape
     elevation = np.array(elevation)
     elevation = (elevation - elevation.min()) / (elevation.max() - elevation.min())
