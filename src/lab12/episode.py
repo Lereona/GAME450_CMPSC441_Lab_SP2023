@@ -17,28 +17,35 @@ from pathlib import Path
 sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
 from lab11.pygame_combat import run_turn
 
-# #testing
-# from lab11.turn_combat import Combat
+# # #testing
+from lab11.turn_combat import Combat
 # from lab11.pygame_ai_player import PyGameAICombatPlayer
+# from lab11.pygame_combat import PyGameComputerCombatPlayer
 
 
-def run_episode(currentGame, player, opponent):
 
+def run_episode(player, opponent):
+    currentGame = Combat()
     episode = []
-    episode += [((player.health, opponent.health), player.weapon, currentGame.checkWin(player, opponent))]
+    # episode += [((player.health, opponent.health), player.weapon, currentGame.checkWin(player, opponent))]
     while (currentGame.gameOver == False):
-        run_turn(currentGame, player, opponent)
-        episode += [((player.health, opponent.health), player.weapon, currentGame.checkWin(player, opponent))]
+        if(opponent.health <= 0 or player.health <= 0):   
+            break
 
+        playerHealth = player.health
+        opponentHealth = opponent.health
+        reward = run_turn(currentGame,player,opponent)
+        
+        episode.append(((playerHealth, opponentHealth),player.action, reward))
     return episode
 
 # #testing
 # newgame = Combat()
 # player = PyGameAICombatPlayer("you")
 # #player.health = 50
-# opponent = PyGameAICombatPlayer("bot")
-# #opponent.health = 60
+# opponent = PyGameComputerCombatPlayer("bot")
+# opponent.health = 50
 
-# new_episode = run_episode(newgame, player, opponent)
+# new_episode = run_episode(player, opponent)
     
 # print(new_episode)
