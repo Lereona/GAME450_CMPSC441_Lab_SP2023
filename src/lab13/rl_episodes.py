@@ -123,6 +123,7 @@ def test_policy(policy):
 
 
 if __name__ == "__main__":
+    #run 2000 times for faster run but increase for consistency
     action_values = run_episodes(2000)
     print(action_values)
     optimal_policy = get_optimal_policy(action_values)
