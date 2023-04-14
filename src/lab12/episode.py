@@ -34,8 +34,8 @@ def run_episode(player, opponent):
 
         playerHealth = player.health
         opponentHealth = opponent.health
-        reward = run_turn(currentGame,player,opponent)
-        
+        (_, _, reward) = run_turn(currentGame,player,opponent)
+
         episode.append(((playerHealth, opponentHealth),player.action, reward))
     return episode
 

@@ -1,4 +1,5 @@
 from lab11.turn_combat import CombatPlayer
+import random
 """ Create PyGameAIPlayer class here"""
 
 
@@ -34,7 +35,7 @@ class PyGameAICombatPlayer(CombatPlayer):
         
     def weapon_selecting_strategy(self):
         while True:
-            self.weapon = 1
+            self.weapon = random.randint(0, 2)
             return self.weapon
     
 

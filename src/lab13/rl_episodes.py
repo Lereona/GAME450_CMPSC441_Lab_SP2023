@@ -75,26 +75,26 @@ def run_episodes(n_episodes):
         Return the action values as a dictionary of dictionaries where the keys are states and 
             the values are dictionaries of actions and their values.
     '''
+
     action_values = {}
-    for _ in range(n_episodes):
-
+    for i in range(n_episodes):
         player = PyGameAICombatPlayer("joe")
-        computerPlayer = PyGameComputerCombatPlayer("bob")
-        players = [player, computerPlayer]
-
-        history_returns = get_history_returns(run_episode(*players))
-
-        for state, actions in history_returns.items():
+        computer = PyGameComputerCombatPlayer("bob")
+        
+        history = get_history_returns(run_episode(player, computer))
+        
+        for state in history:
             if state not in action_values:
+                #create nested dictionary
                 action_values[state] = {}
-
-
-            for action, returns in actions.items():
+                
+            for action in history[state]:
                 if action not in action_values[state]:
+                    #create list
                     action_values[state][action] = []
-
-                action_values[state][action].append(returns)
-
+                #add value to list
+                action_values[state][action].append(history[state][action])
+    #find the average
     for state in action_values:
         for action in action_values[state]:
             action_values[state][action] = sum(action_values[state][action]) / len(action_values[state][action])
@@ -123,8 +123,7 @@ def test_policy(policy):
 
 
 if __name__ == "__main__":
-    action_values = run_episodes(10000)
+    action_values = run_episodes(2000)
     print(action_values)
     optimal_policy = get_optimal_policy(action_values)
-    print(optimal_policy)
     print(test_policy(optimal_policy))
