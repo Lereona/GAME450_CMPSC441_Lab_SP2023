@@ -12,6 +12,7 @@ If you reward every action you may end up in a situation where the agent
 will always choose the action that gives the highest reward. Ironically,
 this may lead to the agent losing the game.
 '''
+
 import sys
 from pathlib import Path
 
@@ -21,7 +22,7 @@ sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
 from lab11.pygame_combat import PyGameComputerCombatPlayer
 from lab11.turn_combat import CombatPlayer
 from lab12.episode import run_episode
-
+from lab11.pygame_ai_player import PyGameAICombatPlayer
 from collections import defaultdict
 import random
 import numpy as np
@@ -74,6 +75,29 @@ def run_episodes(n_episodes):
         Return the action values as a dictionary of dictionaries where the keys are states and 
             the values are dictionaries of actions and their values.
     '''
+    action_values = {}
+    for _ in range(n_episodes):
+
+        player = PyGameAICombatPlayer("joe")
+        computerPlayer = PyGameComputerCombatPlayer("bob")
+        players = [player, computerPlayer]
+
+        history_returns = get_history_returns(run_episode(*players))
+
+        for state, actions in history_returns.items():
+            if state not in action_values:
+                action_values[state] = {}
+
+
+            for action, returns in actions.items():
+                if action not in action_values[state]:
+                    action_values[state][action] = []
+
+                action_values[state][action].append(returns)
+
+    for state in action_values:
+        for action in action_values[state]:
+            action_values[state][action] = sum(action_values[state][action]) / len(action_values[state][action])
 
     return action_values
 
